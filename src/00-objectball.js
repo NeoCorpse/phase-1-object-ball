@@ -116,26 +116,22 @@ function gameObject() {
 }
 
 function numPointsScored(name) {
-	try {
+	if (gameObject().home.players[name]) {
 		return gameObject().home.players[name].points;
-	} catch (err) {
-		try {
-			return gameObject().away.players[name].points;
-		} catch (err) {
-			return `${name} is not a player`;
-		}
+	} else if (gameObject().away.players[name]) {
+		return gameObject().away.players[name].points;
+	} else {
+		return `${name} is not a player`;
 	}
 }
 
 function shoeSize(name) {
-	try {
+	if (gameObject().home.players[name]) {
 		return gameObject().home.players[name].shoe;
-	} catch (err) {
-		try {
-			return gameObject().away.players[name].shoe;
-		} catch (err) {
-			return `${name} is not a player`;
-		}
+	} else if (gameObject().away.players[name]) {
+		return gameObject().away.players[name].shoe;
+	} else {
+		return `${name} is not a player`;
 	}
 }
 
