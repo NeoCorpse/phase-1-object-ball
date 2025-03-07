@@ -162,8 +162,8 @@ function playerNumbers(name) {
 		return arr;
 	} else if (Object.values(obj.away)[0] === name) {
 		let arr = [];
-		for (let player in obj.home.players) {
-			arr.push(obj.home.players[player].number);
+		for (let player in obj.away.players) {
+			arr.push(obj.away.players[player].number);
 		}
 		return arr;
 	} else {
@@ -172,12 +172,12 @@ function playerNumbers(name) {
 }
 
 function playerStats(name) {
-	const players = { ...gameObject().home.players, ...gameObject().away.players };
+	const players = Object.assign({}, gameObject().home.players, gameObject().away.players);
 	return players[name] || `${name} is not a player`;
 }
 
 function bigShoeRebounds() {
-	const players = { ...gameObject().home.players, ...gameObject().away.players };
+	const players = Object.assign({}, gameObject().home.players, gameObject().away.players);
 	let arr = [];
 	for (let player in players) {
 		arr.push(players[player]);
@@ -187,13 +187,14 @@ function bigShoeRebounds() {
 }
 
 function mostPointsScored() {
-	const players = { ...gameObject().home.players, ...gameObject().away.players };
-	let arr = [];
-	for (let player in players) {
-		arr.push(players[player]);
-	}
-	arr.sort((a, b) => b.points - a.points);
-	return arr[0].points;
+	// const players = Object.assign({}, gameObject().home.players, gameObject().away.players);
+	const players = [...Object.entries(gameObject().home.players), ...Object.entries(gameObject().away.players)];
+	// let arr = [];
+	// for (let player of players) {
+	// 	arr.push(players[player]);
+	// }
+	players.sort((a, b) => b[1].points - a[1].points);
+	return players[0][0];
 }
 
 function winningTeam() {

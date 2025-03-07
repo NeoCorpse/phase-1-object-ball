@@ -28,6 +28,7 @@
   },
   "homepage": "https://github.com/learn-co-curriculum/phase-1-object-ball#readme",
   "dependencies": {
+    "babel-core": "^6.26.3",
     "chai": "^4.2.0",
     "jsdom": "^9.0",
     "mocha": "5.2.0",
