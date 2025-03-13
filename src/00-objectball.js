@@ -117,104 +117,92 @@ function gameObject() {
 
 const obj = gameObject();
 function numPointsScored(name) {
-	if (obj.home.players[name]) {
-		return obj.home.players[name].points;
-	} else if (obj.away.players[name]) {
-		return obj.away.players[name].points;
-	} else {
-		return `${name} is not a player`;
-	}
+	const player = obj.home.players[name] || obj.away.players[name] || null;
+	if (!player) return `${name} is not a player.`;
+
+	return `${name} has ${player.points} points.`;
 }
 
 function shoeSize(name) {
-	if (obj.home.players[name]) {
-		return obj.home.players[name].shoe;
-	} else if (obj.away.players[name]) {
-		return obj.away.players[name].shoe;
-	} else {
-		return `${name} is not a player`;
-	}
+	const player = obj.home.players[name] || obj.away.players[name] || null;
+	if (!player) return `${name} is not a player.`;
+
+	return `${name} has a shoe size of ${player.shoe}.`;
 }
 
 function teamColors(name) {
-	if (Object.values(obj.home)[0] === name) {
-		return obj.home.colors;
-	} else if (Object.values(obj.away)[0] === name) {
-		return obj.away.colors;
-	} else {
-		return `${name} is not a team name`;
-	}
+	const side = obj.home.teamName === name ? 'home' : obj.away.teamName === name ? 'away' : null;
+	if (!side) return `${name} is not a team name`;
+
+	return `The team colours for ${name} are ${Object.values(obj[side].colors).join(' and ')}.`;
 }
 
 function teamNames() {
-	let result = [];
-	result.push(obj.home.teamName, obj.away.teamName);
-	return result;
+	return [obj.home.teamName, obj.away.teamName];
 }
 
 function playerNumbers(name) {
-	if (Object.values(obj.home)[0] === name) {
-		let arr = [];
-		for (let player in obj.home.players) {
-			arr.push(obj.home.players[player].number);
-		}
-		return arr;
-	} else if (Object.values(obj.away)[0] === name) {
-		let arr = [];
-		for (let player in obj.away.players) {
-			arr.push(obj.away.players[player].number);
-		}
-		return arr;
-	} else {
-		return `${name} is not a team name`;
+	let arr = [];
+
+	let side = obj.home.teamName === name ? 'home' : obj.away.teamName === name ? 'away' : null;
+	if (!side) return `${name} is not a team name`;
+
+	for (let player in obj[side].players) {
+		arr.push(obj[side].players[player].number);
 	}
+
+	return `${name} team numbers: ${arr.join(', ')}.`;
 }
 
 function playerStats(name) {
 	const players = Object.assign({}, obj.home.players, obj.away.players);
-	return players[name] || `${name} is not a player`;
+
+	return players[name] ? { [name]: players[name] } : `${name} is not a player`;
 }
 
 function bigShoeRebounds() {
-	const players = Object.assign({}, obj.home.players, obj.away.players);
-	let arr = [];
-	for (let player in players) {
-		arr.push(players[player]);
-	}
-	arr.sort((a, b) => b.shoe - a.shoe);
-	return arr[0].rebounds;
+	const players = [...Object.entries(obj.home.players), ...Object.entries(obj.away.players)];
+
+	players.sort((a, b) => b[1].shoe - a[1].shoe);
+
+	return `${players[0][0]} has a shoe size of ${players[0][1].shoe} and has ${players[0][1].rebounds} rebounds.`;
 }
 
 function mostPointsScored() {
 	const players = [...Object.entries(obj.home.players), ...Object.entries(obj.away.players)];
+
 	players.sort((a, b) => b[1].points - a[1].points);
-	return players[0][0];
+
+	return `${players[0][0]} has the most points (${players[0][1].points} points)`;
 }
 
 function winningTeam() {
 	let home = 0,
 		away = 0;
+
 	for (let player in obj.home.players) {
 		home += obj.home.players[player].points;
 	}
 	for (let player in obj.away.players) {
 		away += obj.away.players[player].points;
 	}
-	return home > away ? obj.home.teamName : obj.away.teamName;
+
+	return `The winning team is ${home > away ? obj.home.teamName : obj.away.teamName} with ${home > away ? home : away} points.`;
 }
 
 function playerWithLongestName() {
 	const names = [...Object.keys(obj.home.players), ...Object.keys(obj.away.players)];
-	return names.sort((a, b) => b.length - a.length)[0];
+
+	const longest = names.sort((a, b) => b.length - a.length)[0];
+
+	return `${longest} has the longest name.`;
 }
 
 function doesLongNameStealATon() {
 	const players = [...Object.entries(obj.home.players), ...Object.entries(obj.away.players)];
-	const byName = [...players].sort((a, b) => b[0].length - a[0].length);
-	const bySteals = [...players].sort((a, b) => b[1].steals - a[1].steals);
-	return byName[0] === bySteals[0];
-}
 
-function homeTeamName() {
-	return teamNames()[0];
+	const bySteals = players.sort((a, b) => b[1].steals - a[1].steals);
+	const longest = playerWithLongestName().split(' ').slice(0, 2).join(' ');
+
+	return bySteals[0][0] === longest ? `${longest} has the most steals (${bySteals[0][1].steals} steals)` : `${longest} does not have the most steals.`;
 }
